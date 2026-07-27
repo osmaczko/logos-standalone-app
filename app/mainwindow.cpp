@@ -1,4 +1,5 @@
 #include "mainwindow.h"
+#include "sessionlog.h"
 #include "LogosQmlBridge.h"
 #include "ViewModuleHost.h"
 
@@ -216,7 +217,8 @@ void MainWindow::setupUi(const QString& pluginPath, int width, int height)
                 }
 
                 auto* viewHost = new ViewModuleHost(this);
-                bool spawned = viewHost->spawn(moduleName, pluginSoPath, uiAuthToken);
+                bool spawned = viewHost->spawn(moduleName, pluginSoPath, uiAuthToken,
+                                               SessionLog::instance().filePath());
                 if (!spawned) {
                     qWarning() << "Failed to spawn ui-host for view module" << moduleName;
                     delete viewHost;

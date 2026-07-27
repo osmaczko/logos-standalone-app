@@ -78,6 +78,19 @@ the same directory, and the flag wins when both are given. This matches Logos
 Basecamp's `--user-dir` / `LOGOS_USER_DIR`, so a session means the same thing
 under either host.
 
+### The session log
+
+Each run captures its own stdout and stderr into
+`<user-dir>/logs/logos-standalone-app_<stamp>.log`, still mirroring them to the
+terminal. Everything the app, the core and every module child writes reaches
+those two descriptors, so the file is the run's whole account of itself. It
+rotates to `<stamp>.NNN.log` every 10000 lines, and the ten most recent runs are
+kept.
+
+A view module is told which file that is, so a plugin can read the session back
+without knowing where the host writes; see
+[logos-view-module-runtime](https://github.com/logos-co/logos-view-module-runtime).
+
 ## Plugin Metadata
 
 When given a plugin directory, the app reads `metadata.json` (or `manifest.json`) to determine the plugin type and auto-load declared dependencies before the UI is shown.

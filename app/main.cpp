@@ -1,4 +1,5 @@
 #include "mainwindow.h"
+#include "sessionlog.h"
 
 #ifdef ENABLE_QML_INSPECTOR
 #include "inspectorserver.h"
@@ -143,6 +144,14 @@ int main(int argc, char* argv[])
     }
     qInfo() << "Session directory:" << userDir;
 
+    // Capture the run's own streams before the core brings up its logger, so
+    // the sink it opens on stderr writes into the file too (and, seeing a pipe
+    // rather than a terminal, writes it without colour escapes).
+    if (SessionLog::instance().start(userDir + "/logs", "logos-standalone-app"))
+        qInfo() << "Session log:" << SessionLog::instance().filePath();
+    else
+        qWarning() << "Failed to capture this session's log under" << userDir + "/logs";
+
     // Setup logos core
     logos_core_add_modules_dir(modulesDir.toUtf8().constData());
 
@@ -213,5 +222,6 @@ int main(int argc, char* argv[])
 
     int result = app.exec();
     logos_core_cleanup();
+    SessionLog::instance().stop();
     return result;
 }
