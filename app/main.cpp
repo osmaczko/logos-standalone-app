@@ -55,6 +55,13 @@ static QJsonObject readPluginMetadata(const QString& pluginPath, QString& plugin
 
 int main(int argc, char* argv[])
 {
+    // Qt sends a message to the journal unless stderr is a tty, and the session
+    // capture set up below puts a pipe there. Set before the first Qt message,
+    // which is when Qt decides once and for all where messages go, or the log
+    // file holds the core's own sink and every module's output but none of the
+    // app's.
+    qputenv("QT_FORCE_STDERR_LOGGING", "1");
+
     QApplication app(argc, argv);
     app.setOrganizationName("Logos");
     app.setApplicationName("LogosStandalone");
